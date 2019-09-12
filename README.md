@@ -22,6 +22,7 @@ Once you reach the last location, it will begin heading back through the locatio
 If you click on the map it will skip to the next location. This is useful if you change your path halfway through and need to get it back to your current leg.
 
 ## Todo
+- Userscript manager showing errors for undefined wsHook
 - Block outgoing DD locations not defined in the path.
 - Auto class change affirm
 - When submitting a new path, send a new DD immediately (Maybe)
