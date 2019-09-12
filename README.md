@@ -3,7 +3,7 @@ Revised DrunkStumbler for IdleLands4
 https://idle.land
 
 # To Use
-Download a userscript manager like [tampermonkey](https://www.tampermonkey.net/) or (greasemonkey)[https://www.greasespot.net/]
+Download a userscript manager like [tampermonkey](https://www.tampermonkey.net/) or [greasemonkey](https://www.greasespot.net/)
 Import the script
 Once logged into idlelands, click on "Divine Stumbler" in the left-hand menu
 Enter a series of coordinates as `x,y` like so:
