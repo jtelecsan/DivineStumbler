@@ -71,6 +71,7 @@ const menuListInject = {
                 <div style="position: absolute; margin: 0px; right: 0;"><button id="ds-hide" type="button" onclick="hideDialogue()" style="font-size: 30px; color: white; background: none; border: none;">✕</button></div>
                 <h1 style="padding-left: 15px;">Divine Stumbler</h1>
                 <div style="margin: -15px 15px 0px 15px;"><input id="ds-enable" onchange="dsEnable();" type="checkbox"><label> Enabled</label></div>
+                <div style="margin: 0px 15px 0px 15px;"><input id="ds-reverse" onchange="dsReverse();" type="checkbox"><label> Reverse</label></div>
                 <div style="flex: 1; margin: 5px 15px 0px 15px;"><textarea id="ds-input" style="padding: 5px; color: white; background: rgba(85,87,91,1); border:none; resize: none; width: 100%; height: 100%;"></textarea></div>
                 <div style="margin: 10px 15px 10px 15px;"><button id="ds-submit" type="button" onclick="submitDS()" style="color: white; background: rgba(85,87,91,1); border: none; height: 30px; width: 100%;">Submit</button></div>
             </div>
@@ -187,6 +188,12 @@ const formatDdList = (given) => {
 window.dsEnable = () => {
     let checkbox = document.getElementById('ds-enable');
     options.enabled = checkbox.checked;
+}
+
+// reverse checkbox for script
+window.dsReverse = () => {
+    let checkbox = document.getElementById('ds-reverse');
+    options.reverse = checkbox.checked;
 }
 
 // fill textarea for dialogue with current ddList
