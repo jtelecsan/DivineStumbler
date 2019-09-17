@@ -27,7 +27,7 @@ const ddStorage = {
     list: [],
     curr: 0,
     futureDD: function () {
-        return this.list[(this.curr+1)%this.list.length];
+        return this.list[(this.curr + 1) % this.list.length];
     },
     setDD: function () {
         if (this.curr >= this.list.length) {
@@ -38,7 +38,7 @@ const ddStorage = {
     },
     iterateCurr: function () {
         this.curr++;
-        return this.curr-1;
+        return this.curr - 1;
     }
 }
 const playerData = {
@@ -121,6 +121,7 @@ wsHook.after = function (data, url, wsObject) {
     /* Ignore Unwanted Messages */
     if (parsed.rid) return data;
     if (parsed.channel === 'playerUpdates') return data;
+    // take character updates (for location/dd) and adventure log updates (for profession)
     if (parsed.data.name !== 'character:patch') return data;
 
     // find current divine direction
@@ -132,6 +133,23 @@ wsHook.after = function (data, url, wsObject) {
     // find possible new y
     let tempY = parsed.data.data.findPath('/y');
     playerData.currLoc.y = tempY !== undefined ? tempY : playerData.currLoc.y;
+    // find possible choices
+    let choices = parsed.data.data.filter(obj => obj.path.match(/^\/\$choicesData\/choices/))
+    if (choices.length > 0) {
+        // find possible trainer choices
+        let trainerChoices = choices.filter(c => c.op === 'add' && c.value.event === 'FindTrainer')
+        // if trainer choices exists, accept
+        if (trainerChoices.length > 0) {
+            let choiceId = trainerChoices[0].value.id;
+            wsObject.send(JSON.stringify({
+                "event": "choice:make",
+                "data": {
+                    "choiceId": choiceId,
+                    "valueChosen": "Yes"
+                }
+            }))
+        }
+    }
 
     // if ds enabled, then auto divine direction
     if (options.enabled) {
@@ -248,3 +266,4 @@ Array.prototype.findPath = function (path) {
     if (prospect[0] !== undefined) return prospect[0].value;
     else return undefined;
 }
+
