@@ -19,6 +19,7 @@ Once enabled with supplied coordinates, the script will set your DivineDirection
 On arrival, it will set your DivineDirection to the next location.  
 And so on and so forth.  
 Once you reach the last location, it will begin heading back through the locations in a loop unless you toggle off `Loop`  
+If you click on the map it will skip to the next location. This is useful if you change your path halfway through and need to get it back to your current leg.
 
 ## Todo
 - Userscript manager showing errors for undefined wsHook
