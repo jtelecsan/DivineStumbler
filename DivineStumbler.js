@@ -21,17 +21,24 @@ console.log('Loaded DivineStumbler!');
 
 const options = {
     enabled: false,
-    reverse: true
+    loop: true
 }
 const ddStorage = {
     list: [],
     curr: 0,
+    futureDD: function () {
+        return this.list[(this.curr+1)%this.list.length];
+    },
     setDD: function () {
-        if (this.curr > this.list.length) {
+        if (this.curr >= this.list.length) {
             this.curr = 0;
             this.list = this.list.reverse();
         }
-        return this.list[++this.curr];
+        return this.list[this.iterateCurr()];
+    },
+    iterateCurr: function () {
+        this.curr++;
+        return this.curr-1;
     }
 }
 const playerData = {
@@ -71,7 +78,7 @@ const menuListInject = {
                 <div style="position: absolute; margin: 0px; right: 0;"><button id="ds-hide" type="button" onclick="hideDialogue()" style="font-size: 30px; color: white; background: none; border: none;">✕</button></div>
                 <h1 style="padding-left: 15px;">Divine Stumbler</h1>
                 <div style="margin: -15px 15px 0px 15px;"><input id="ds-enable" onchange="dsEnable();" type="checkbox"><label> Enabled</label></div>
-                <div style="margin: 0px 15px 0px 15px;"><input id="ds-reverse" onchange="dsReverse();" type="checkbox"><label> Reverse</label></div>
+                <div style="margin: 0px 15px 0px 15px;"><input id="ds-loop" onchange="dsLoop();" type="checkbox" checked="true" ><label> Loop</label></div>
                 <div style="flex: 1; margin: 5px 15px 0px 15px;"><textarea id="ds-input" style="padding: 5px; color: white; background: rgba(85,87,91,1); border:none; resize: none; width: 100%; height: 100%;"></textarea></div>
                 <div style="margin: 10px 15px 10px 15px;"><button id="ds-submit" type="button" onclick="submitDS()" style="color: white; background: rgba(85,87,91,1); border: none; height: 30px; width: 100%;">Submit</button></div>
             </div>
@@ -126,30 +133,38 @@ wsHook.after = function (data, url, wsObject) {
     let tempY = parsed.data.data.findPath('/y');
     playerData.currLoc.y = tempY !== undefined ? tempY : playerData.currLoc.y;
 
-    // auto divine direction
-    sendDd(wsObject);
-    console.log(playerData)
+    // if ds enabled, then auto divine direction
+    if (options.enabled) {
+        killDd(wsObject);
+        sendDd(wsObject);
+    }
+
     return data;
 }
 
-// send a new DD using the given websocket
-const sendDd = (ws) => {
-    // if nothing to send, don't send
-    if (ddStorage.list.length <= 0) return;
-    // 
-    if (resetDd(playerData)) ws.send(formatDd(ddStorage.setDD()))
-    // code for if we need to reset DD because it was not reached goes here
-    // TODO
+// send future DD to turn off DD
+// TODO in testing
+// and current dd exists
+// and current location equals dd location
+// then remove current dd
+const killDd = (ws) => {
+    if (playerData.dd !== null && (playerData.currLoc.x === playerData.dd.x && playerData.currLoc.y === playerData.dd.y)) {
+        let newDD = formatDd(ddStorage.futureDD());
+        ws.send(formatDd(newDD));
+    }
 }
 
+// send a new DD using the given websocket
 // Do I need to reset the dd?
-// if ds is enabled => yes
-// if current dd is null => yes
-// if current location equals dd location => yes
-const resetDd = (data) => options.enabled ?
-    data.dd === null ?
-        true : data.currLoc.x === data.dd.x && data.currLoc.y === data.dd.y ?
-            true : false : false;
+// if ds is enabled AND a dd to use exists
+// AND if current dd is null
+// then send new dd
+const sendDd = (ws) => {
+    if (ddStorage.list.length > 0 && playerData.dd === null) {
+        let newDD = formatDd(ddStorage.setDD());
+        ws.send(newDD);
+    }
+}
 
 // given coords, return the dd object
 const formatDd = (coords) =>
@@ -170,7 +185,7 @@ const formatDdList = (given) => {
         // return formatted array of objects
         let objs = arr.map(e => {
             let [x, y] = e.split(',').map(e => parseInt(e));
-            if (!isNaN(x)&& !isNaN(y)) {
+            if (!isNaN(x) && !isNaN(y)) {
                 return {
                     x,
                     y
@@ -190,10 +205,10 @@ window.dsEnable = () => {
     options.enabled = checkbox.checked;
 }
 
-// reverse checkbox for script
-window.dsReverse = () => {
-    let checkbox = document.getElementById('ds-reverse');
-    options.reverse = checkbox.checked;
+// Loop checkbox for script
+window.dsLoop = () => {
+    let checkbox = document.getElementById('ds-loop');
+    options.loop = checkbox.checked;
 }
 
 // fill textarea for dialogue with current ddList
