@@ -2,6 +2,8 @@
 Revised DrunkStumbler for IdleLands4   
 https://idle.land
 
+![](preview.gif)
+
 # To Use
 Download a userscript manager like [tampermonkey](https://www.tampermonkey.net/) or [greasemonkey](https://www.greasespot.net/)  
 Import the script  
