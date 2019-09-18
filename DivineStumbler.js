@@ -138,8 +138,8 @@ wsHook.after = function (data, url, wsObject) {
     if (choices.length > 0) {
         // find possible trainer choices
         let trainerChoices = choices.filter(c => c.op === 'add' && c.value.event === 'FindTrainer')
-        // if trainer choices exists, accept
-        if (trainerChoices.length > 0) {
+        // if trainer choices exists and ds enabled, accept
+        if (options.enabled && trainerChoices.length > 0) {
             let choiceId = trainerChoices[0].value.id;
             wsObject.send(JSON.stringify({
                 "event": "choice:make",
