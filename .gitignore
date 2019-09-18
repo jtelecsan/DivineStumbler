@@ -1,0 +1,8 @@
+# ignore all
+*
+
+# but not
+!.gitignore
+!DivineStumbler.js
+!preview.gif
+!README.md

@@ -168,7 +168,7 @@ wsHook.after = function (data, url, wsObject) {
 const killDd = (ws) => {
     if (playerData.dd !== null && (playerData.currLoc.x === playerData.dd.x && playerData.currLoc.y === playerData.dd.y)) {
         let newDD = formatDd(ddStorage.futureDD());
-        ws.send(formatDd(newDD));
+        ws.send(newDD);
     }
 }
 
