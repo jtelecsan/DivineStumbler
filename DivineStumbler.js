@@ -34,7 +34,8 @@ const ddStorage = {
             this.curr = 0;
             this.list = this.list.reverse();
         }
-        return this.list[this.iterateCurr()];
+        let dd = this.list[this.iterateCurr()]
+        return dd;
     },
     iterateCurr: function () {
         this.curr++;
@@ -244,6 +245,7 @@ window.submitDS = () => {
     }, 100);
     let input = document.getElementById('ds-input');
     ddStorage.list = formatDdList(input.value);
+    ddStorage.curr = 0;
 }
 
 // open the dialogue
