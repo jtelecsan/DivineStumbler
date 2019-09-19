@@ -31,7 +31,8 @@ const ddStorage = {
     },
     setDD: function () {
         if (this.curr >= this.list.length) {
-            this.curr = 0;
+            // don't repeat ends of path
+            this.curr = 1;
             this.list = this.list.reverse();
         }
         let dd = this.list[this.iterateCurr()]
@@ -75,7 +76,7 @@ const menuListInject = {
             let dialogue = document.createElement('div');
             dialogue.innerHTML = `
             <div id="divine-stumbler"
-                style=" display: none; flex-direction: column; color:white; background: rgba(34,36,40,1); position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 25%; height: 50%;">
+                style="display: none; flex-direction: column; color:white; background: rgba(34,36,40,1); position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 25%; height: 50%;">
                 <div style="position: absolute; margin: 0px; right: 0;"><button id="ds-hide" type="button" onclick="hideDialogue()" style="font-size: 30px; color: white; background: none; border: none;">✕</button></div>
                 <h1 style="padding-left: 15px;">Divine Stumbler</h1>
                 <div style="margin: -15px 15px 0px 15px;"><input id="ds-enable" onchange="dsEnable();" type="checkbox"><label> Enabled</label></div>
@@ -135,10 +136,14 @@ wsHook.after = function (data, url, wsObject) {
     let tempY = parsed.data.data.findPath('/y');
     playerData.currLoc.y = tempY !== undefined ? tempY : playerData.currLoc.y;
     // find possible choices
-    let choices = parsed.data.data.filter(obj => obj.path.match(/^\/\$choicesData\/choices/))
+    let choices = parsed.data.data.filter(obj => {
+        return obj.path.match(/^\/\$choicesData\/choices/)
+    })
     if (choices.length > 0) {
         // find possible trainer choices
-        let trainerChoices = choices.filter(c => c.op === 'add' && c.value.event === 'FindTrainer')
+        let trainerChoices = choices.filter(c => {
+            return c.op === 'add' && c.value.event === 'FindTrainer'
+        })
         // if trainer choices exists and ds enabled, accept
         if (options.enabled && trainerChoices.length > 0) {
             let choiceId = trainerChoices[0].value.id;
@@ -167,7 +172,9 @@ wsHook.after = function (data, url, wsObject) {
 // and current location equals dd location
 // then remove current dd
 const killDd = (ws) => {
-    if (playerData.dd !== null && (playerData.currLoc.x === playerData.dd.x && playerData.currLoc.y === playerData.dd.y)) {
+    if (playerData.dd !== null &&
+        (playerData.currLoc.x === playerData.dd.x &&
+            playerData.currLoc.y === playerData.dd.y)) {
         let newDD = formatDd(ddStorage.futureDD());
         ws.send(newDD);
     }
