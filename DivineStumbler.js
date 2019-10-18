@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     DivineStumbler
-// @version  1
+// @version  1.01
 // @grant    none
 // @require https://cdn.rawgit.com/skepticfx/wshook/master/wsHook.js
 // @run-at document-start
@@ -33,7 +33,9 @@ const ddStorage = {
         if (this.curr >= this.list.length) {
             // don't repeat ends of path
             this.curr = 1;
-            this.list = this.list.reverse();
+            if (options.loop) {
+                this.list = this.list.reverse();
+            }
         }
         let dd = this.list[this.iterateCurr()]
         return dd;
